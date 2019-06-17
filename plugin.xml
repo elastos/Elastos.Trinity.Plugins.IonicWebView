@@ -81,6 +81,9 @@
     <source-file src="src/ios/CDVWKProcessPoolFactory.m"/>
     <header-file src="src/ios/IONAssetHandler.h"/>
     <source-file src="src/ios/IONAssetHandler.m"/>
+    <source-file src="src/ios/AssetSchemeHandler.swift" />
+    <source-file src="src/ios/IconSchemeHandler.swift" />
+    <source-file src="src/ios/TrinitySchemeHandler.swift" />
     <asset src="src/ios/wk-plugin.js" target="wk-plugin.js"/>
   </platform>
   <issue>https://github.com/ionic-team/cordova-plugin-ionic-webview/issues</issue>

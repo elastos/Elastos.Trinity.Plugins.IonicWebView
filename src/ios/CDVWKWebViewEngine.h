@@ -19,8 +19,9 @@
 
 #import <WebKit/WebKit.h>
 #import <Cordova/CDV.h>
+#import "TrinityPlugin.h"
 
-@interface CDVWKWebViewEngine : CDVPlugin <CDVWebViewEngineProtocol, WKScriptMessageHandler, WKNavigationDelegate>
+@interface CDVWKWebViewEngine : TrinityPlugin <CDVWebViewEngineProtocol, WKScriptMessageHandler, WKNavigationDelegate>
 
 @property (nonatomic, strong, readonly) id <WKUIDelegate> uiDelegate;
 @property (nonatomic, strong) NSString * basePath;

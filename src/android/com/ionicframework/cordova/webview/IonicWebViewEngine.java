@@ -25,6 +25,9 @@ import org.apache.cordova.PluginManager;
 import org.apache.cordova.engine.SystemWebViewClient;
 import org.apache.cordova.engine.SystemWebViewEngine;
 import org.apache.cordova.engine.SystemWebView;
+import org.elastos.trinity.runtime.AppInfo;
+import org.elastos.trinity.runtime.TrinityCordovaInterfaceImpl;
+import org.elastos.trinity.runtime.WebViewFragment;
 
 public class IonicWebViewEngine extends SystemWebViewEngine {
   public static final String TAG = "IonicWebViewEngine";
@@ -33,6 +36,7 @@ public class IonicWebViewEngine extends SystemWebViewEngine {
   private String CDV_LOCAL_SERVER;
   private static final String LAST_BINARY_VERSION_CODE = "lastBinaryVersionCode";
   private static final String LAST_BINARY_VERSION_NAME = "lastBinaryVersionName";
+  private WebViewFragment fragment;
 
   /**
    * Used when created via reflection.
@@ -63,10 +67,16 @@ public class IonicWebViewEngine extends SystemWebViewEngine {
     String scheme = preferences.getString("Scheme", "http");
     CDV_LOCAL_SERVER = scheme + "://" + hostname;
 
+    fragment = ((TrinityCordovaInterfaceImpl)cordova).fragment;
+
     localServer = new WebViewLocalServer(cordova.getActivity(), hostname, true, parser, scheme);
     localServer.hostAssets("www");
+    localServer.setFragment(fragment);
 
-    webView.setWebViewClient(new ServerClient(this, parser));
+    AppInfo.Framework framework = fragment.appInfo.getFramework("ionic");
+    if (framework != null) {
+      webView.setWebViewClient(new ServerClient(this, parser));
+    }
 
     super.init(parentWebView, cordova, client, resourceApi, pluginManager, nativeToJsMessageQueue);
     if (android.os.Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
@@ -121,19 +131,34 @@ public class IonicWebViewEngine extends SystemWebViewEngine {
     @RequiresApi(Build.VERSION_CODES.LOLLIPOP)
     @Override
     public WebResourceResponse shouldInterceptRequest(WebView view, WebResourceRequest request) {
-      return localServer.shouldInterceptRequest(request.getUrl(), request);
+      WebResourceResponse response = localServer.shouldInterceptRequest(request.getUrl(), request);
+      if (response == null) {
+        String url = request.getUrl().toString();
+        // if (url.startsWith("unsafe:")) {
+        //   String str = url.substring(7);
+        //   if (str.startsWith("assets://") || str.startsWith("trinity:///") || str.startsWith("icon:///")) {
+        //     url = str;
+        //   }
+        // }
+        response = super.shouldInterceptRequest(view, url);
+      }
+      return response;
     }
 
     @TargetApi(Build.VERSION_CODES.KITKAT)
     @Override
     public WebResourceResponse shouldInterceptRequest(WebView view, String url) {
-      return localServer.shouldInterceptRequest(Uri.parse(url), null);
+      WebResourceResponse response = localServer.shouldInterceptRequest(Uri.parse(url), null);
+      if (response == null) {
+        response = super.shouldInterceptRequest(view, url);
+      }
+      return response;
     }
 
     @Override
     public void onPageStarted(WebView view, String url, Bitmap favicon) {
       super.onPageStarted(view, url, favicon);
-      String launchUrl = parser.getLaunchUrl();
+      String launchUrl = fragment.getLaunchUrl();
       if (!launchUrl.contains(WebViewLocalServer.httpsScheme) && !launchUrl.contains(WebViewLocalServer.httpScheme) && url.equals(launchUrl)) {
         view.stopLoading();
         // When using a custom scheme the app won't load if server start url doesn't end in /

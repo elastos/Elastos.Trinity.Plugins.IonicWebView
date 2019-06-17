@@ -51,7 +51,7 @@
         NSDictionary * headers = @{ @"Content-Type" : mimeType, @"Cache-Control": @"no-cache"};
         response = [[NSHTTPURLResponse alloc] initWithURL:localUrl statusCode:statusCode HTTPVersion:nil headerFields:headers];
     }
-    
+
     [urlSchemeTask didReceiveResponse:response];
     [urlSchemeTask didReceiveData:data];
     [urlSchemeTask didFinish];

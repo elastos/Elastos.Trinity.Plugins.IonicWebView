@@ -34,6 +34,8 @@
 #define LAST_BINARY_VERSION_CODE @"lastBinaryVersionCode"
 #define LAST_BINARY_VERSION_NAME @"lastBinaryVersionName"
 
+#import "Elastos-Swift.h"
+
 @implementation UIScrollView (BugIOS11)
 
 + (void)load {
@@ -142,6 +144,11 @@ NSTimer *timer;
         NSString * snapshots = [cordovaDataDirectory stringByAppendingPathComponent:@"ionic_built_snapshots"];
         wwwPath = [snapshots stringByAppendingPathComponent:[persistedPath lastPathComponent]];
     }
+//    NSString* startPage = ((CDVViewController*)self.viewController).startPage;
+//    NSRange range = [startPage rangeOfString:@"/" options:NSBackwardsSearch] ;
+//    range = NSMakeRange(7, range.location);
+//    wwwPath = [startPage substringWithRange:range];
+    wwwPath = [self getAppPath];
     self.basePath = wwwPath;
     return wwwPath;
 }
@@ -224,6 +231,7 @@ NSTimer *timer;
     [userContentController addScriptMessageHandler:weakScriptMessageHandler name:CDV_BRIDGE_NAME];
     [userContentController addScriptMessageHandler:weakScriptMessageHandler name:CDV_IONIC_STOP_SCROLL];
 
+
     // Inject XHR Polyfill
     NSLog(@"CDVWKWebViewEngine: trying to inject XHR polyfill");
     WKUserScript *wkScript = [self wkPluginScript];
@@ -257,6 +265,14 @@ NSTimer *timer;
 
     self.handler = [[IONAssetHandler alloc] initWithBasePath:[self getStartPath] andScheme:scheme];
     [configuration setURLSchemeHandler:self.handler forURLScheme:scheme];
+    [configuration setURLSchemeHandler:[AssetSchemeHandler alloc] forURLScheme:@"asset"];
+    [configuration setURLSchemeHandler:[TrinitySchemeHandler alloc] forURLScheme:@"trinity"];
+    if ( [self.viewController isKindOfClass:[LauncherViewController class]]) {
+        IconSchemeHandler* iconHandler = [IconSchemeHandler alloc];
+        [iconHandler setLauncherViewController:(LauncherViewController*)self.viewController];
+        [configuration setURLSchemeHandler:iconHandler forURLScheme:@"icon"];
+    }
+
 
     // re-create WKWebView, since we need to update configuration
     // remove from keyWindow before recreating
@@ -422,9 +438,17 @@ NSTimer *timer;
 
 - (id)loadRequest:(NSURLRequest *)request
 {
+    NSString* url1 = request.URL.absoluteString;
     if (request.URL.fileURL) {
         NSURL* startURL = [NSURL URLWithString:((CDVViewController *)self.viewController).startPage];
-        NSString* startFilePath = [self.commandDelegate pathForResource:[startURL path]];
+        NSString* path = [startURL path];
+        NSString* startFilePath;
+        if ([path hasPrefix:[self getAppPath]]) {
+            startFilePath = path;
+        }
+        else {
+            startFilePath = [[self getAppPath] stringByAppendingPathComponent:path];
+        }
         NSURL *url = [[NSURL URLWithString:self.CDV_LOCAL_SERVER] URLByAppendingPathComponent:request.URL.path];
         if ([request.URL.path isEqualToString:startFilePath]) {
             url = [NSURL URLWithString:self.CDV_LOCAL_SERVER];
