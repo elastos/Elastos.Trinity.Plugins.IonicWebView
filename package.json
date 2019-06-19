@@ -1,5 +1,5 @@
 {
-  "name": "cordova-plugin-ionic-webview",
+  "name": "IonicWebView",
   "version": "4.0.1",
   "description": "Ionic Web View Engine Plugin",
   "scripts": {
@@ -9,14 +9,16 @@
   },
   "repository": {
     "type": "git",
-    "url": "https://github.com/ionic-team/cordova-plugin-ionic-webview"
+    "url": "https://github.com/elastos/Elastos.Trinity.Plugins.IonicWebView"
   },
   "bugs": {
-    "url": "https://github.com/ionic-team/cordova-plugin-ionic-webview/issues"
+    "url": "https://github.com/elastos/Elastos.Trinity.Plugins.IonicWebView/issues"
   },
   "keywords": [
     "cordova",
-    "wkwebview"
+    "wkwebview",
+    "elastos",
+    "trinity"
   ],
   "author": "Ionic Team",
   "license": "Apache-2.0",
