@@ -26,48 +26,20 @@ import WebKit
 @available(iOS 11.0, *)
 @objc(TrinitySchemeHandler)
 class TrinitySchemeHandler : NSObject,WKURLSchemeHandler {
+    var plugin: TrinityPlugin?;
+
+    @objc func setTrinityPlugin(_ plugin: TrinityPlugin) {
+        self.plugin = plugin;
+    }
+
     @objc func webView(_ webView: WKWebView, start urlSchemeTask: WKURLSchemeTask) {
         let url = urlSchemeTask.request.url!.absoluteString;
-        //TODO:: change getAppPath;
-        let path = getTrinityPath(url, urlSchemeTask.request.mainDocumentURL!.absoluteString);
-
-        if path.range(of: "://") != nil {
-            let request = URLRequest(url: NSURL(string: path)! as URL);
-            let session: URLSession = URLSession(configuration: URLSessionConfiguration.default);
-            let task = session.dataTask(with: request, completionHandler: {[weak urlSchemeTask] (data, response, error) in
-                guard let urlSchemeTask = urlSchemeTask else {
-                    return
-                }
-
-                if let error = error {
-                    urlSchemeTask.didFailWithError(error)
-                } else {
-                    if let response = response {
-                        urlSchemeTask.didReceive(response)
-                    }
-
-                    if let data = data {
-                        urlSchemeTask.didReceive(data)
-                    }
-                    urlSchemeTask.didFinish()
-                }
-            })
-            task.resume();
+        let path = try? self.plugin!.getCanonicalPath(url);
+        guard path != nil else {
+            return;
         }
-        else if path.hasPrefix("/") {
-            do {
-                let fileUrl = URL.init(fileURLWithPath: path)
 
-                let data = try Data(contentsOf: fileUrl);
-                let response = URLResponse(url: urlSchemeTask.request.url!, mimeType: "text/plain", expectedContentLength: data.count, textEncodingName: nil)
-                urlSchemeTask.didReceive(response);
-                urlSchemeTask.didReceive(data)
-                urlSchemeTask.didFinish();
-            }
-            catch let error {
-                print("TrinitySchemeHandler: \(error)");
-            }
-        }
+        handleUrlSchemeTask(path!, urlSchemeTask);
 
     }
 

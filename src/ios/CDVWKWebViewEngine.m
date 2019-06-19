@@ -266,7 +266,9 @@ NSTimer *timer;
     self.handler = [[IONAssetHandler alloc] initWithBasePath:[self getStartPath] andScheme:scheme];
     [configuration setURLSchemeHandler:self.handler forURLScheme:scheme];
     [configuration setURLSchemeHandler:[AssetSchemeHandler alloc] forURLScheme:@"asset"];
-    [configuration setURLSchemeHandler:[TrinitySchemeHandler alloc] forURLScheme:@"trinity"];
+    TrinitySchemeHandler* trinityHandler = [TrinitySchemeHandler alloc];
+    [trinityHandler setTrinityPlugin:self];
+    [configuration setURLSchemeHandler:trinityHandler forURLScheme:@"trinity"];
     if ( [self.viewController isKindOfClass:[LauncherViewController class]]) {
         IconSchemeHandler* iconHandler = [IconSchemeHandler alloc];
         [iconHandler setLauncherViewController:(LauncherViewController*)self.viewController];

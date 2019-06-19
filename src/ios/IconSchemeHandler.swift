@@ -40,19 +40,7 @@ class IconSchemeHandler : NSObject, WKURLSchemeHandler {
         }
         let index = (url as NSString).substring(from: 8);
         let path = plugin!.getIconPath(Int(index)!);
-        let fileUrl = URL.init(fileURLWithPath: path)
-
-        do {
-            let data = try Data(contentsOf: fileUrl);
-            let response = URLResponse(url: urlSchemeTask.request.url!, mimeType: "text/plain", expectedContentLength: data.count, textEncodingName: nil)
-            urlSchemeTask.didReceive(response);
-            urlSchemeTask.didReceive(data)
-            urlSchemeTask.didFinish();
-        }
-        catch let error {
-            print("AssetSchemeHandler: \(error)");
-        }
-
+        handleUrlSchemeTask(path, urlSchemeTask);
     }
 
     @objc func webView(_ webView: WKWebView, stop urlSchemeTask: WKURLSchemeTask) {
