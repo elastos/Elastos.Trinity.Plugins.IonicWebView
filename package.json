@@ -1,5 +1,5 @@
 {
-  "name": "IonicWebView",
+  "name": "elastos-trinity-plugins-ionicwebview",
   "version": "4.0.1",
   "description": "Ionic Web View Engine Plugin",
   "scripts": {
