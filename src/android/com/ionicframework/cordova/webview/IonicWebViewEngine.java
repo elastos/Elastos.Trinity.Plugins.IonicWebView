@@ -73,10 +73,7 @@ public class IonicWebViewEngine extends SystemWebViewEngine {
     localServer.hostAssets("www");
     localServer.setFragment(fragment);
 
-    AppInfo.Framework framework = fragment.appInfo.getFramework("ionic");
-    if (framework != null) {
-      webView.setWebViewClient(new ServerClient(this, parser));
-    }
+    webView.setWebViewClient(new ServerClient(this, parser));
 
     super.init(parentWebView, cordova, client, resourceApi, pluginManager, nativeToJsMessageQueue);
     if (android.os.Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
