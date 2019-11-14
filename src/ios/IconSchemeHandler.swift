@@ -26,21 +26,23 @@ import WebKit
 @available(iOS 11.0, *)
 @objc(IconSchemeHandler)
 class IconSchemeHandler : NSObject, WKURLSchemeHandler {
-    var viewController: LauncherViewController?;
+    var viewController: TrinityViewController?;
 
-    @objc func setLauncherViewController(_ viewController: LauncherViewController) {
+    @objc func setTrinityViewController(_ viewController: TrinityViewController) {
         self.viewController = viewController;
     }
 
     @objc func webView(_ webView: WKWebView, start urlSchemeTask: WKURLSchemeTask) {
         let url = urlSchemeTask.request.url!.absoluteString;
-        let plugin = self.viewController?.getManagerPlugin();
+        let plugin = self.viewController?.getBasePlugin();
         guard plugin != nil else {
             return;
         }
-        let index = (url as NSString).substring(from: 8);
-        let path = plugin!.getIconPath(Int(index)!);
-        handleUrlSchemeTask(path, urlSchemeTask);
+
+        let path = plugin!.getIconPath(url);
+        if path != nil {
+            handleUrlSchemeTask(path!, urlSchemeTask);
+        }
     }
 
     @objc func webView(_ webView: WKWebView, stop urlSchemeTask: WKURLSchemeTask) {

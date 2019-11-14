@@ -269,11 +269,10 @@ NSTimer *timer;
     TrinitySchemeHandler* trinityHandler = [TrinitySchemeHandler alloc];
     [trinityHandler setTrinityPlugin:self];
     [configuration setURLSchemeHandler:trinityHandler forURLScheme:@"trinity"];
-    if ( [self.viewController isKindOfClass:[LauncherViewController class]]) {
-        IconSchemeHandler* iconHandler = [IconSchemeHandler alloc];
-        [iconHandler setLauncherViewController:(LauncherViewController*)self.viewController];
-        [configuration setURLSchemeHandler:iconHandler forURLScheme:@"icon"];
-    }
+
+    IconSchemeHandler* iconHandler = [IconSchemeHandler alloc];
+    [iconHandler setTrinityViewController:self.viewController];
+    [configuration setURLSchemeHandler:iconHandler forURLScheme:@"icon"];
 
 
     // re-create WKWebView, since we need to update configuration
