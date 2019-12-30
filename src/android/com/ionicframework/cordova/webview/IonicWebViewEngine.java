@@ -26,8 +26,11 @@ import org.apache.cordova.engine.SystemWebViewClient;
 import org.apache.cordova.engine.SystemWebViewEngine;
 import org.apache.cordova.engine.SystemWebView;
 import org.elastos.trinity.runtime.AppInfo;
+import org.elastos.trinity.runtime.AppManager;
 import org.elastos.trinity.runtime.TrinityCordovaInterfaceImpl;
 import org.elastos.trinity.runtime.WebViewFragment;
+
+import java.io.File;
 
 public class IonicWebViewEngine extends SystemWebViewEngine {
   public static final String TAG = "IonicWebViewEngine";
@@ -77,9 +80,17 @@ public class IonicWebViewEngine extends SystemWebViewEngine {
 
     super.init(parentWebView, cordova, client, resourceApi, pluginManager, nativeToJsMessageQueue);
     if (android.os.Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-      final WebSettings settings = webView.getSettings();
-      int mode = preferences.getInteger("MixedContentMode", 0);
-      settings.setMixedContentMode(mode);
+        final WebSettings settings = webView.getSettings();
+        int mode = preferences.getInteger("MixedContentMode", 0);
+        settings.setMixedContentMode(mode);
+
+        WebViewFragment view = ((TrinityCordovaInterfaceImpl)cordova).fragment;
+        String databasePath = AppManager.getShareInstance().getDataPath(view.appInfo.app_id) + "database";
+        File destDir = new File(databasePath);
+        if (!destDir.exists()) {
+            destDir.mkdirs();
+        }
+        settings.setDatabasePath(databasePath);
     }
     SharedPreferences prefs = cordova.getActivity().getApplicationContext().getSharedPreferences(IonicWebView.WEBVIEW_PREFS_NAME, Activity.MODE_PRIVATE);
     String path = prefs.getString(IonicWebView.CDV_SERVER_PATH, null);
