@@ -753,7 +753,7 @@ NSTimer *timer;
             // https://issues.apache.org/jira/browse/CB-12497
             int navType = (int)navigationAction.navigationType;
             if (WKNavigationTypeOther == navigationAction.navigationType) {
-                navType = (int)CDVWebViewNavigationTypeOther;
+                navType = 5; //(int)CDVWebViewNavigationTypeOther;
             }
             shouldAllowRequest = (((BOOL (*)(id, SEL, id, int))objc_msgSend)(plugin, selector, navigationAction.request, navType));
             if (!shouldAllowRequest) {
