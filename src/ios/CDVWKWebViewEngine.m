@@ -34,7 +34,7 @@
 #define LAST_BINARY_VERSION_CODE @"lastBinaryVersionCode"
 #define LAST_BINARY_VERSION_NAME @"lastBinaryVersionName"
 
-#import "Elastos-Swift.h"
+#import "elastOS-Swift.h"
 
 @implementation UIScrollView (BugIOS11)
 
