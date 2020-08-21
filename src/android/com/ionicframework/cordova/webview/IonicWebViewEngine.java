@@ -84,12 +84,20 @@ public class IonicWebViewEngine extends SystemWebViewEngine {
         settings.setMixedContentMode(mode);
 
         WebViewFragment view = ((TrinityCordovaInterfaceImpl)cordova).fragment;
-        String databasePath = AppManager.getShareInstance().getDataPath(view.appInfo.app_id) + "database";
+        String dataPath = AppManager.getShareInstance().getDataPath(view.appInfo.app_id);
+        String databasePath = dataPath + "database";
         File destDir = new File(databasePath);
         if (!destDir.exists()) {
             destDir.mkdirs();
         }
         settings.setDatabasePath(databasePath);
+
+        String cachePath = dataPath + "cache";
+        destDir = new File(cachePath);
+        if (!destDir.exists()) {
+            destDir.mkdirs();
+        }
+        settings.setAppCachePath(cachePath);
     }
     SharedPreferences prefs = cordova.getActivity().getApplicationContext().getSharedPreferences(IonicWebView.WEBVIEW_PREFS_NAME, Activity.MODE_PRIVATE);
     String path = prefs.getString(IonicWebView.CDV_SERVER_PATH, null);
