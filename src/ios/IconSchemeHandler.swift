@@ -26,7 +26,7 @@ import WebKit
 @available(iOS 11.0, *)
 @objc(IconSchemeHandler)
 class IconSchemeHandler : NSObject, WKURLSchemeHandler {
-    var viewController: TrinityViewController?;
+    weak var viewController: TrinityViewController?;
 
     @objc func setTrinityViewController(_ viewController: TrinityViewController) {
         self.viewController = viewController;
